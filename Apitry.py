@@ -1,10 +1,8 @@
 import requests
 import sys
-import webbrowser
+
 
 base_url = "https://pokeapi.co/api/v2/"
-# IMPORTANT: Replace "YOUR_API_KEY_HERE" with your actual Giphy API key
-GIPHY_API_KEY = "jx06m5LpswQ8q0HBeqHqeMvfH6bh1r26" 
 
 def get_pokemon_data(pokemon_name):
     """Fetches data for a given Pokémon by name."""
@@ -66,31 +64,38 @@ def print_pokemon_types(pokemon_name):
         type_name = type_entry["type"]["name"]
         print(f" - {type_name}")
 
-
-
-
-def get_pokemon_gif(pokemon_name, api_key):
-    """Fetches a GIF for a given Pokémon."""
-    url = "https://api.giphy.com/v1/gifs/search"
-    params = {
-        "api_key": api_key,
-        "q": pokemon_name,
-        "limit": 1,
-        "rating": "g"
-    }
-    try:
-        response = requests.get(url, params=params, timeout=10)
-        response.raise_for_status()
-        data = response.json()
-        if data["data"]:
-            return data["data"][0]["images"]["original"]["url"]
-        else:
-            return "No GIF found."
-    except requests.RequestException as e:
-        return f"Could not fetch GIF: {e}"
+def get_pokemon_image(pokemon_name):
+    """Fetches a Pokémon sprite image from the PokeAPI."""
+    pokemon_info = get_pokemon_data(pokemon_name)
+    if "error" in pokemon_info:
+        return f"Could not fetch image for {pokemon_name}: {pokemon_info.get('detail')}"
+    
+    sprites = pokemon_info.get("sprites", {})
+    image_url = sprites.get("front_default")
     
     
+    sprites= pokemon_info.get("other", {}).get("official-artwork", {} )
+    image_url = sprites.get("front_default") 
     
+    if image_url:
+        return image_url
+    else:
+        return f"No image found for {pokemon_name}."
+
+#def enlarge_pokemon_image(pokemon_name):
+    pokemon_info = get_pokemon_data(pokemon_name)
+    if "error" in pokemon_info:
+        print(f"Error fetching data for {pokemon_name}: {pokemon_info.get('detail')}")
+        return None
+
+    sprites = pokemon_info.get("sprites", {}) or {}
+    # Prefer the official artwork (higher resolution)
+    image_url = (
+        sprites.get("other", {})
+        .get("official-artwork", {})
+        .get("front_default")
+        if sprites.get("other") else None
+    )
     
     
 def battle_pokemon(pokemon1_name, pokemon2_name):
@@ -117,7 +122,9 @@ def battle_pokemon(pokemon1_name, pokemon2_name):
 
     winner_name = None
     search_term = None
-
+    
+    
+    
     if pokemon1_attack > pokemon2_attack:
         winner_name = pokemon1_name
         print(f"\n{winner_name.title()} wins!")
@@ -128,16 +135,16 @@ def battle_pokemon(pokemon1_name, pokemon2_name):
         search_term = winner_name
     else:
         print("\nIt's a tie!")
-        search_term = f"{pokemon1_name} and {pokemon2_name} tie"
+        search_term = pokemon1_name 
 
-    print(f"Searching for a GIF for '{search_term}'...")
-    gif_url = get_pokemon_gif(search_term, GIPHY_API_KEY)
+    if search_term:
+        print(f"Searching for an image for '{search_term}'...")
+        image_url = get_pokemon_image(search_term)
 
-    if gif_url and not gif_url.startswith("Could not fetch") and not gif_url.startswith("No GIF"):
-        print(f"Opening GIF: {gif_url}")
-        webbrowser.open(gif_url)
-    else:
-        print(gif_url) # Print error or "No GIF found"
+        if image_url and not image_url.startswith("Could not fetch") and not image_url.startswith("No image"):
+            print(f"Opening image: {image_url}")
+        else:
+            print(image_url)
 
 
 if __name__ == "__main__":

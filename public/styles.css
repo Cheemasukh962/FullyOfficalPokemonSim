@@ -1,0 +1,120 @@
+body {
+    font-family: 'Times New Roman';
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+main {
+    text-align: top;
+    background-color: rgb(241, 236, 236);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(89, 2, 230, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+h1 {
+    color: #333;
+    position: top;
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+    animation: fadeIn 1s;
+}
+
+.input-container {
+    margin-bottom: 20px;
+}
+
+#pokemon-name {
+    padding: 10px;
+    width: 60%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    animation: fadeIn 1s;
+}
+
+#fetch-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    animation: fadeIn 1s;
+}
+
+#fetch-button:hover {
+    background-color: #0056b3;
+}
+
+.info-container {
+    margin-top: 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    min-height: 120px;
+}
+
+.poke-card {
+    flex: 1 1 0;
+    text-align: center;
+    background: rgba(255,255,255,0.7);
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.poke-img { display: block; margin: 8px auto; }
+
+animation-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+/* Pulsing glow utility */
+.pulse-glow {
+    /* change the color to suit your theme */
+    --glow-color: 0, 150, 255;
+    position: relative;
+    /* optional subtle base glow */
+    box-shadow: 0 0 14px rgba(var(--glow-color), 0.75);
+    transition: box-shadow 150ms ease-in-out;
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 2px 0 rgba(var(--glow-color), 0.18);
+        transform: translateZ(0);
+    }
+    50% {
+        box-shadow: 0 0 30px 8px rgba(var(--glow-color), 0.14);
+    }
+    100% {
+        box-shadow: 0 0 2px 0 rgba(var(--glow-color), 0.50);
+    }
+}
+
+/* Text glow variant */
+.pulse-text-glow {
+    --text-glow-color: 0, 150, 255;
+    animation: pulse-text-glow 2s ease-in-out infinite;
+}
+@keyframes pulse-text-glow {
+    0% { text-shadow: 0 0 2px rgba(var(--text-glow-color), 0.25); }
+    50% { text-shadow: 0 0 18px rgba(var(--text-glow-color), 0.20); }
+    100% { text-shadow: 0 0 2px rgba(var(--text-glow-color), 0.25); }
+}
+
+/* Example utility to remove bullets if used on lists */
+.no-bullets { list-style: none; padding-left: 0; }

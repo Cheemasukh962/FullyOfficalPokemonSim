@@ -10,6 +10,8 @@ if "%SPHINXBUILD%" == "" (
 set SOURCEDIR=source
 set BUILDDIR=build
 
+if "%1" == "runapp" goto runapp
+
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (
 	echo.
@@ -30,6 +32,14 @@ goto end
 
 :help
 %SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+goto end
+
+:runapp
+echo.Starting the application...
+start /B .\.venv\Scripts\python.exe -m source.api.server
+start http://localhost:8000
+goto end
+
 
 :end
 popd

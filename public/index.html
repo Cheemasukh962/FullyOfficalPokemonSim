@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Info</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to Diddy Info Fetcher</h1>
+    </header>
+    <main>
+        <h2>Pokémon Info Fetcher</h2>
+        <div class="input-container">
+            <input type="text" id="pokemon-name" placeholder="Enter Pokémon name">
+            <button id="fetch-button" class="info-container pulse-glow">Get Info</button>
+        </div>
+        <!-- Add `pulse-glow` to the info container and the image will receive `pulse-glow` when inserted by JS -->
+            <div class="input-container">
+                <input type="text" id="pokemon-name-1" placeholder="Enter first Pokémon name">
+                <input type="text" id="pokemon-name-2" placeholder="Enter second Pokémon name">
+                <button id="fetch-both-button">Show Both</button>
+                <button id="battle-button">Battle</button>
+            </div>
+
+            <div id="pokemon-info" class="info-container pulse-glow">
+                <div id="poke-1" class="poke-card"></div>
+                <div id="poke-2" class="poke-card"></div>
+            </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
