@@ -1,4 +1,4 @@
-// Read query param `winner` from URL
+// Read query param from URL
 function getQueryParam(name) {
     const params = new URLSearchParams(window.location.search);
     return params.get(name);
@@ -10,31 +10,49 @@ async function fetchPokemon(name) {
     return res.json();
 }
 
-function renderWinner(data, container) {
-    if (!data) { container.innerHTML = '<p>No data</p>'; return; }
-    const imageUrl = data.other?.['official-artwork']?.front_default || data.sprites.front_default;
-    let abilities = '<ul>' + data.abilities.map(a => `<li>${a.ability.name}${a.is_hidden? ' (hidden)':''}</li>`).join('') + '</ul>';
-    let stats = '<ul>' + data.stats.map(s => `<li>${s.stat.name}: ${s.base_stat}</li>`).join('') + '</ul>';
-    container.innerHTML = `
-        <h2 class="pulse-text-glow">${data.name} wins!</h2>
-        <img src="${imageUrl}" alt="${data.name}" style="max-width:220px;">
-        <h4>Stats</h4>
-        ${stats}
-        <h4>Abilities</h4>
-        ${abilities}
-    `;
-}
-
 async function main() {
     const winner = getQueryParam('winner');
-    const container = document.getElementById('winner-container');
-    if (!winner) { container.innerHTML = '<p>No winner specified.</p>'; return; }
+    
+    if (!winner) {
+        document.querySelector('.victory-card').innerHTML = '<div class="error">No winner specified.</div>';
+        return;
+    }
+
     try {
         const data = await fetchPokemon(winner);
-        renderWinner(data, container);
+        const imageUrl = data.other?.['official-artwork']?.front_default || data.sprites.front_default;
+        
+        document.getElementById('winner-name').textContent = data.name;
+        document.getElementById('winner-image').src = imageUrl;
+        document.getElementById('winner-image').alt = data.name;
+        
+        // Trigger confetti effect
+        if (typeof confetti !== 'undefined') {
+            const duration = 3000;
+            const animationEnd = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 50,
+                    angle: Math.random() * 360,
+                    spread: 360,
+                    origin: { x: Math.random(), y: Math.random() - 0.2 },
+                    startVelocity: 30,
+                    colors: ['#FFD700', '#FFA500', '#FF6B6B', '#4ECDC4', '#45B7D1', '#F7DC6F']
+                });
+
+                if (Date.now() < animationEnd) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
     } catch (err) {
-        container.innerHTML = `<p>${err.message}</p>`;
+        document.querySelector('.victory-card').innerHTML = `<div class="error">${err.message}</div>`;
     }
 }
+
+document.getElementById('battle-again-btn').addEventListener('click', () => {
+    window.location.href = 'index.html';
+});
 
 main();

@@ -3,32 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokémon Info</title>
+    <title>Pokémon Battle Arena</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Welcome to Diddy Info Fetcher</h1>
-    </header>
-    <main>
-        <h2>Pokémon Info Fetcher</h2>
-        <div class="input-container">
-            <input type="text" id="pokemon-name" placeholder="Enter Pokémon name">
-            <button id="fetch-button" class="info-container pulse-glow">Get Info</button>
-        </div>
-        <!-- Add `pulse-glow` to the info container and the image will receive `pulse-glow` when inserted by JS -->
-            <div class="input-container">
-                <input type="text" id="pokemon-name-1" placeholder="Enter first Pokémon name">
-                <input type="text" id="pokemon-name-2" placeholder="Enter second Pokémon name">
-                <button id="fetch-both-button">Show Both</button>
-                <button id="battle-button">Battle</button>
-            </div>
+    <div class="battle-container">
+        <!-- Decorative pokeballs -->
+        <div class="decorative-circle"></div>
+        <div class="decorative-circle"></div>
+        <div class="decorative-circle"></div>
+        <div class="decorative-circle"></div>
 
-            <div id="pokemon-info" class="info-container pulse-glow">
-                <div id="poke-1" class="poke-card"></div>
-                <div id="poke-2" class="poke-card"></div>
+        <!-- Header section -->
+        <div class="battle-header">
+            <h1 class="header-title">POKÉMON BATTLE</h1>
+            <div class="status-lights">
+                <div class="status-dot"></div>
+                <div class="status-dot"></div>
+                <div class="status-dot"></div>
             </div>
-    </main>
+        </div>
+
+        <!-- Pokemon input section -->
+        <div style="width: 100%; max-width: 900px; margin-bottom: 2rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <input type="text" id="pokemon-name-1" placeholder="Enter first Pokémon" 
+                    style="padding: 0.75rem; border: 2px solid rgba(255,255,255,0.3); border-radius: 0.5rem; background: rgba(255,255,255,0.1); color: white; font-size: 1rem;">
+                <input type="text" id="pokemon-name-2" placeholder="Enter second Pokémon" 
+                    style="padding: 0.75rem; border: 2px solid rgba(255,255,255,0.3); border-radius: 0.5rem; background: rgba(255,255,255,0.1); color: white; font-size: 1rem;">
+            </div>
+            <button id="fetch-both-button" 
+                style="width: 100%; padding: 0.75rem; background: linear-gradient(to right, rgb(99, 102, 241), rgb(139, 92, 246)); border: 2px solid rgba(255,255,255,0.3); border-radius: 0.5rem; color: white; font-weight: bold; cursor: pointer; transition: all 0.3s ease;">
+                Load Both Pokémon
+            </button>
+        </div>
+
+        <!-- Pokemon cards grid -->
+        <div class="pokemon-grid" id="pokemon-info">
+            <div id="poke-1" class="pokemon-card">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading...</p>
+                </div>
+            </div>
+            <div id="poke-2" class="pokemon-card">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Battle button -->
+        <button id="battle-button" class="battle-button">
+            <span class="battle-button-icon">⚔️</span>
+            BATTLE
+            <span class="battle-button-icon">⚔️</span>
+        </button>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

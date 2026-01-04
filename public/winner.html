@@ -3,19 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Battle Winner</title>
+    <title>Battle Victory</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        main { max-width: 700px; margin: 40px auto; }
-        .winner-card { text-align:center; padding: 20px; }
-    </style>
 </head>
 <body>
-    <main>
-        <h1>Battle Result</h1>
-        <div id="winner-container" class="winner-card pulse-glow">Loading winner...</div>
-        <p style="text-align:center;margin-top:16px;"><a href="index.html">Back</a></p>
-    </main>
+    <div class="result-container">
+        <!-- Decorative pokeballs -->
+        <div class="decorative-circle"></div>
+        <div class="decorative-circle"></div>
+        <div class="decorative-circle"></div>
+        <div class="decorative-circle"></div>
+
+        <!-- Victory card -->
+        <div class="victory-card">
+            <!-- Victory badge -->
+            <div class="victory-badge">VICTORY!</div>
+
+            <!-- Trophy icon -->
+            <div class="trophy-icon">🏆</div>
+
+            <!-- Victory text -->
+            <div class="victory-text">Wins!</div>
+
+            <!-- Winner Pokemon -->
+            <div class="winner-image-section" id="winner-section">
+                <div class="winner-image-glow"></div>
+                <img id="winner-image" src="" alt="Winner" class="winner-image">
+            </div>
+
+            <!-- Winner name -->
+            <div class="winner-name" id="winner-name"></div>
+
+            <!-- Battle again button -->
+            <button id="battle-again-btn" class="battle-again-button">
+                <span>↻</span>
+                Battle Again
+            </button>
+        </div>
+    </div>
+
     <script src="winner.js"></script>
 </body>
 </html>
