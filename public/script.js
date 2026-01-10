@@ -102,45 +102,6 @@ function renderPokemon(data, container) {
     }, 50);
 }
 
-// Compute the total base stats (helper)
-function computeTotalBaseStat(pokemonData) {
-    return pokemonData.stats.reduce((sum, s) => sum + (s.base_stat || 0), 0);
-}
-
-// Fetch type effectiveness multiplier
-async function getTypeEffectiveness(attacker, defender) {
-    const res = await fetch(`/api/compare/${encodeURIComponent(attacker)}/${encodeURIComponent(defender)}`);
-    if (!res.ok) return 1.0;
-    const data = await res.json();
-    // Return the maximum multiplier across all attacker types
-    let maxMult = 1.0;
-    for (const typeInfo of Object.values(data.effectiveness)) {
-        if (typeInfo.multiplier > maxMult) {
-            maxMult = typeInfo.multiplier;
-        }
-    }
-    return maxMult;
-}
-
-// Decide the winner between two Pokémon
-async function decideWinner(p1Data, p2Data) {
-    const s1 = computeTotalBaseStat(p1Data);
-    const s2 = computeTotalBaseStat(p2Data);
-    
-    // Get type effectiveness multipliers
-    const p1Mult = await getTypeEffectiveness(p1Data.name, p2Data.name);
-    const p2Mult = await getTypeEffectiveness(p2Data.name, p1Data.name);
-    
-    // Apply multipliers to stats
-    const adjustedS1 = s1 * p1Mult;
-    const adjustedS2 = s2 * p2Mult;
-    
-    if (adjustedS1 > adjustedS2) return {winner: p1Data.name, p1Mult, p2Mult};
-    if (adjustedS2 > adjustedS1) return {winner: p2Data.name, p1Mult, p2Mult};
-    
-    return null;
-}
-
 // Fetch and render both Pokémon into their respective containers
 async function showBoth() {
     const name1 = document.getElementById('pokemon-name-1').value.toLowerCase().trim();
@@ -168,7 +129,57 @@ async function showBoth() {
     }
 }
 
-// Battle handler
+// Battle handler - now calls the backend /api/battle endpoint
+
+
+// Load and display battle history from database
+async function loadBattleHistory() {
+    try {
+        const res = await fetch('/api/stats');
+        if (!res.ok) throw new Error('Failed to load battle history');
+        
+        const data = await res.json();
+        
+        // Display recent battles
+        const listContainer = document.getElementById('battle-list');
+        listContainer.innerHTML = '';
+        
+        if (data.recent_battles && data.recent_battles.length > 0) {
+            data.recent_battles.forEach(battle => {
+                const battleItem = document.createElement('div');
+                battleItem.style.cssText = 'padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;';
+                
+                const time = new Date(battle.created_at).toLocaleTimeString();
+                
+                battleItem.innerHTML = `
+                    <div style="flex-grow: 1;">
+                        <div style="color: #FFD700; font-weight: bold;">${battle.winner}</div>
+                        <div style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">vs ${battle.loser}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: #4ECDC4; font-weight: bold;">${battle.winner_stats} > ${battle.loser_stats}</div>
+                        <div style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">${time}</div>
+                    </div>
+                `;
+                listContainer.appendChild(battleItem);
+            });
+        } else {
+            listContainer.innerHTML = '<div style="color: rgba(255,255,255,0.5); text-align: center; padding: 2rem;">No battles yet. Start by clicking BATTLE!</div>';
+        }
+    } catch (err) {
+        console.error('Error loading battle history:', err);
+        document.getElementById('battle-list').innerHTML = `<div style="color: #FF6B6B; text-align: center; padding: 1rem;">Error loading history</div>`;
+    }
+}
+
+// Load battle history when page loads and set up event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    loadBattleHistory();
+    document.getElementById('fetch-both-button').addEventListener('click', showBoth);
+    document.getElementById('battle-button').addEventListener('click', onBattle);
+});
+
+// Reload history after each battle
 async function onBattle() {
     const c1 = document.getElementById('poke-1');
     const c2 = document.getElementById('poke-2');
@@ -179,21 +190,38 @@ async function onBattle() {
         return;
     }
 
-    const result = await decideWinner(p1, p2);
-    if (!result) {
-        alert('It\'s a tie! Try again.');
-        return;
+    try {
+        const res = await fetch('/api/battle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                pokemon1: p1.name,
+                pokemon2: p2.name
+            })
+        });
+
+        if (!res.ok) {
+            const errData = await res.json();
+            alert(errData.error || 'Battle failed');
+            return;
+        }
+
+        const result = await res.json();
+        
+        // Reload battle history immediately
+        await loadBattleHistory();
+        
+        // Redirect to winner page with result data
+        const params = new URLSearchParams();
+        params.append('winner', result.winner);
+        params.append('loser', result.loser);
+        params.append('p1name', p1.name);
+        params.append('p2name', p2.name);
+        params.append('winner_attack', result.winner_attack);
+        params.append('loser_attack', result.loser_attack);
+        params.append('battle_id', result.battle_id);
+        window.location.href = `winner.html?${params.toString()}`;
+    } catch (err) {
+        alert('Error: ' + err.message);
     }
-
-    // Redirect to winner page with query params
-    const params = new URLSearchParams();
-    params.append('winner', result.winner);
-    params.append('p1name', p1.name);
-    params.append('p2name', p2.name);
-    params.append('p1mult', result.p1Mult.toFixed(2));
-    params.append('p2mult', result.p2Mult.toFixed(2));
-    window.location.href = `winner.html?${params.toString()}`;
 }
-
-document.getElementById('fetch-both-button').addEventListener('click', showBoth);
-document.getElementById('battle-button').addEventListener('click', onBattle);

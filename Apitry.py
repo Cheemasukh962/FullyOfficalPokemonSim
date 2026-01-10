@@ -1,6 +1,4 @@
 import requests
-import sys
-
 
 base_url = "https://pokeapi.co/api/v2/"
 
@@ -14,100 +12,19 @@ def get_pokemon_data(pokemon_name):
     except requests.RequestException as e:
         return {"error": "network error", "detail": str(e)}
 
-def print_pokemon_weight(pokemon_name):
-    pokemon_info = get_pokemon_data(pokemon_name)
-    if "error" in pokemon_info:
-        print(f"Error: {pokemon_info.get('error')} (detail: {pokemon_info.get('detail')})")
-    else:
-        weight = pokemon_info.get("weight")
-        print(f"{pokemon_name.title()} weight: {weight}")
 
-def print_pokemon_abilities(pokemon_name):
-    pokemon_info = get_pokemon_data(pokemon_name)
-    if "error" in pokemon_info:
-        print("Error fetching abilities.")
-        return
-    abilities = pokemon_info.get("abilities", [])
-    print(f"{pokemon_name.title()} abilities:")
-    for entry in abilities:
-        ability_name = entry["ability"]["name"]
-        hidden = entry["is_hidden"]
-        print(f" - {ability_name}{' (hidden)' if hidden else ''}")
 
-def print_pokemon_stats(pokemon_name):
-    pokemon_info = get_pokemon_data(pokemon_name)
-    if "error" in pokemon_info:
-        print("Error fetching stats.")
-        return
-    print(f"{pokemon_name.title()} stats:")
-    for every in pokemon_info.get("stats", []):
-        stat_name = every["stat"]["name"]
-        base_stat = every["base_stat"]
-        print(f" - {stat_name}: {base_stat}")
-
-def print_pokemon_height(pokemon_name):
-    pokemon_info = get_pokemon_data(pokemon_name)
-    if "error" in pokemon_info:
-        print("Error fetching height.")
-        return
-    get_height = pokemon_info.get("height")
-    print(f"{pokemon_name.title()} height: {get_height} (decimetres)")
-
-def print_pokemon_types(pokemon_name):
-    pokemon_info = get_pokemon_data(pokemon_name)
-    if "error" in pokemon_info:
-        print("Error fetching types.")
-        return
-    types = pokemon_info.get("types", [])
-    print(f"{pokemon_name.title()} types:")
-    for type_entry in types:
-        type_name = type_entry["type"]["name"]
-        print(f" - {type_name}")
-
-def get_pokemon_image(pokemon_name):
-    """Fetches a Pokémon sprite image from the PokeAPI."""
-    pokemon_info = get_pokemon_data(pokemon_name)
-    if "error" in pokemon_info:
-        return f"Could not fetch image for {pokemon_name}: {pokemon_info.get('detail')}"
-    
-    sprites = pokemon_info.get("sprites", {})
-    image_url = sprites.get("front_default")
-    
-    
-    sprites= pokemon_info.get("other", {}).get("official-artwork", {} )
-    image_url = sprites.get("front_default") 
-    
-    if image_url:
-        return image_url
-    else:
-        return f"No image found for {pokemon_name}."
-
-#def enlarge_pokemon_image(pokemon_name):
-    pokemon_info = get_pokemon_data(pokemon_name)
-    if "error" in pokemon_info:
-        print(f"Error fetching data for {pokemon_name}: {pokemon_info.get('detail')}")
-        return None
-
-    sprites = pokemon_info.get("sprites", {}) or {}
-    # Prefer the official artwork (higher resolution)
-    image_url = (
-        sprites.get("other", {})
-        .get("official-artwork", {})
-        .get("front_default")
-        if sprites.get("other") else None
-    )
-    
-    
-def battle_pokemon(pokemon1_name, pokemon2_name):
+def battle_pokemon_logic(pokemon1_name, pokemon2_name):
+    """
+    Execute battle logic and return result as dict.
+    Winner determined by attack stat comparison.
+    Used by backend API.
+    """
     pokemon1_info = get_pokemon_data(pokemon1_name)
     pokemon2_info = get_pokemon_data(pokemon2_name)
 
-    if "error" in pokemon1_info:
-        print(f"Error: {pokemon1_name.title()} not found.")
-        return
-    if "error" in pokemon2_info:
-        print(f"Error: {pokemon2_name.title()} not found.")
-        return
+    if "error" in pokemon1_info or "error" in pokemon2_info:
+        return {"error": "Pokémon not found"}
 
     # Safely get stats
     stats1 = {s["stat"]["name"]: s["base_stat"] for s in pokemon1_info.get("stats", [])}
@@ -115,58 +32,26 @@ def battle_pokemon(pokemon1_name, pokemon2_name):
 
     pokemon1_attack = stats1.get("attack", 0)
     pokemon2_attack = stats2.get("attack", 0)
-    
-    print(f"\n--- BATTLE ---")
-    print(f"{pokemon1_name.title()} Attack: {pokemon1_attack}")
-    print(f"{pokemon2_name.title()} Attack: {pokemon2_attack}")
 
-    winner_name = None
-    search_term = None
-    
-    
-    
     if pokemon1_attack > pokemon2_attack:
-        winner_name = pokemon1_name
-        print(f"\n{winner_name.title()} wins!")
-        search_term = winner_name
+        return {
+            "winner": pokemon1_name,
+            "loser": pokemon2_name,
+            "winner_attack": pokemon1_attack,
+            "loser_attack": pokemon2_attack
+        }
     elif pokemon2_attack > pokemon1_attack:
-        winner_name = pokemon2_name
-        print(f"\n{winner_name.title()} wins!")
-        search_term = winner_name
+        return {
+            "winner": pokemon2_name,
+            "loser": pokemon1_name,
+            "winner_attack": pokemon2_attack,
+            "loser_attack": pokemon1_attack
+        }
     else:
-        print("\nIt's a tie!")
-        search_term = pokemon1_name 
-
-    if search_term:
-        print(f"Searching for an image for '{search_term}'...")
-        image_url = get_pokemon_image(search_term)
-
-        if image_url and not image_url.startswith("Could not fetch") and not image_url.startswith("No image"):
-            print(f"Opening image: {image_url}")
-        else:
-            print(image_url)
-
+        return {"error": "It's a tie! Try again."}
 
 if __name__ == "__main__":
-    print("--- Pokémon Info And Battle ---")
-    
-    # Get Pokémon 1
-    name1 = sys.argv[1] if len(sys.argv) > 1 else input("Enter first Pokémon name: ")
-    if not name1:
-        sys.exit("First Pokémon name is required.")
-        
-    print(f"\n--- {name1.title()}'s Info ---")
-    print_pokemon_stats(name1)
-    print_pokemon_types(name1)
-
-    # Get Pokémon 2
-    name2 = sys.argv[2] if len(sys.argv) > 2 else input("Enter second Pokémon name: ")
-    if not name2:
-        sys.exit("Second Pokémon name is required for battle.")
-
-    print(f"\n--- {name2.title()}'s Info ---")
-    print_pokemon_stats(name2)
-    print_pokemon_types(name2)
-
-    # Battle
-    battle_pokemon(name1, name2)
+    import sys
+    print("Testing battle logic...")
+    result = battle_pokemon_logic("pikachu", "charizard")
+    print(result)

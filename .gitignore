@@ -1,0 +1,25 @@
+# Documentation
+*.md
+
+# Environment & IDE
+.venv/
+.env
+.env.local
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+build/
+dist/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
