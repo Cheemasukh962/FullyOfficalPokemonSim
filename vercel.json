@@ -4,7 +4,6 @@
   "outputDirectory": ".",
   "env": {
     "FLASK_ENV": "production",
-    "FLASK_APP": "source/api/server.py",
     "DATABASE_URL": "@DATABASE_URL"
   }
 }
