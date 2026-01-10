@@ -35,7 +35,7 @@ $env:DATABASE_URL = 'postgresql://USER:PASS@HOST:5432/DBNAME'
 ```
 - App runs at http://localhost:8000
 
-## Deploy on Railway
+## Deploy on Railway(for me to remember)
 1. Create a Railway project and add PostgreSQL (free tier available).
 2. Copy the Postgres connection string and set it as a Variable:
    - Key: `DATABASE_URL`
