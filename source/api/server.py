@@ -3,14 +3,28 @@ from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 import os
 import sys
-from database import init_db, db, Battle
 
 CWD = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 PUBLIC_DIR = os.path.join(CWD, "public")
 
-# Add root to path so we can import Apitry.py
+# Add root to path so we can import project modules
 sys.path.insert(0, CWD)
-import Apitry
+
+# Import database via absolute or local module name
+try:
+    from source.api.database import init_db, db, Battle
+except ModuleNotFoundError:
+    from database import init_db, db, Battle
+
+# Support both old `Apitry.py` name and the renamed `Logic.py` on GitHub.
+try:
+    import Apitry
+except ModuleNotFoundError:
+    try:
+        import Logic as Apitry
+    except Exception:
+        # Re-raise original import error for visibility
+        raise
 
 app = Flask(__name__, static_folder=PUBLIC_DIR, static_url_path="")
 CORS(app)
