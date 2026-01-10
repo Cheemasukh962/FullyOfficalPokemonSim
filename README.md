@@ -1,4 +1,5 @@
 # FullyOfficialPokemonSim
+**https://fullyofficalpokemonsim-production.up.railway.app/index.html**
 
 A Flask + SQLAlchemy web app that lets users fetch Pokémon data and simulate simple battles based on attack stats. Frontend is served from `public/` and backend exposes a small REST API. Deployed on Railway with PostgreSQL.
 
