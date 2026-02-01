@@ -23,17 +23,7 @@ A Flask + SQLAlchemy web app that lets users fetch Pokémon data and simulate si
   - If a provider gives `postgres://...`, the app will auto-convert to `postgresql://...`.
 - Local fallback: when `DATABASE_URL` is not set, the app uses SQLite at `pokemon_battle.db`.
 
-## Run Locally (Windows PowerShell)
-```powershell
-cd "C:\Users\cheem\Python workspace"
-# Option A: SQLite (no env vars)
-.venv\Scripts\python.exe source\api\server.py
 
-# Option B: PostgreSQL (set your DB URL)
-$env:DATABASE_URL = 'postgresql://USER:PASS@HOST:5432/DBNAME'
-.venv\Scripts\python.exe source\api\server.py
-```
-- App runs at http://localhost:8000
 
 ## Deploy on Railway(for me to remember)
 1. Create a Railway project and add PostgreSQL (free tier available).
