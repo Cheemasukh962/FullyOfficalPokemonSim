@@ -1,6 +1,7 @@
 # Documentation
 *.md
 !README.md
+!VERCEL_MIGRATION.md
 
 # Environment & IDE
 .venv/
