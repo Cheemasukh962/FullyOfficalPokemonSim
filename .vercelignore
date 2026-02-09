@@ -38,10 +38,6 @@ docs/
 Makefile
 make.bat
 
-# Railway specific
-railway.json
-Procfile
-
 # Git
 .git/
 .gitignore
