@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment files (set via Vercel dashboard)
+.env
+.env.local
+
+# Tests
+tests/
+test_*.py
+*_test.py
+
+# Documentation build
+source/
+docs/
+*.rst
+Makefile
+make.bat
+
+# Railway specific
+railway.json
+Procfile
+
+# Git
+.git/
+.gitignore
